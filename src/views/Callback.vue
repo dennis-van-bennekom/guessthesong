@@ -1,26 +1,28 @@
 <template>
-  <div class="callback">
-    Redirecting...
-  </div>
+    <div class="callback">
+        Redirecting...
+    </div>
 </template>
 
 <script>
+    import spotify from '../spotify';
+
     export default {
         name: 'callback',
         mounted() {
             const params = getHashParams();
 
-            this.$store.dispatch('setAccessToken', params.access_token);
+            spotify.setAccessToken(params.access_token);
 
-            this.$router.push({ name: 'play' });
+            this.$router.push({ name: 'choose' });
         }
     }
 
     function getHashParams() {
-        var hashParams = {};
-        var e, r = /([^&;=]+)=?([^&;]*)/g,
+        const hashParams = {};
+        let e, r = /([^&;=]+)=?([^&;]*)/g,
             q = window.location.hash.substring(1);
-        while ( e = r.exec(q)) {
+        while (e = r.exec(q)) {
             hashParams[e[1]] = decodeURIComponent(e[2]);
         }
         return hashParams;
