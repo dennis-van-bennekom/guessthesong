@@ -44,7 +44,9 @@
             this.playlists = playlists.items;
 
             const result = await spotify.getUserPlaylists();
-            this.ownPlaylists = result.items;
+            this.ownPlaylists = result.items.filter(item => {
+                return item.tracks.total > 4;
+            });
         },
         methods: {
             select(playlist) {
