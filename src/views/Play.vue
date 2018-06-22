@@ -7,7 +7,7 @@
         <h3 v-if="result">{{ result }}</h3>
 
         <section class="answers">
-            <button class="answer" v-for="answer in answers" @click.prevent="guess(answer)">
+            <button class="answer" v-for="answer in answers" @click.prevent="guess(answer)" :disabled="!!result">
                 {{ answer.track.name }}
             </button>
         </section>
@@ -16,6 +16,8 @@
 
 <script>
     import spotify from '../spotify';
+
+    let nextTimeout;
 
     export default {
         name: 'play',
@@ -28,6 +30,7 @@
         },
         beforeRouteLeave(to, from, next) {
             this.audio.pause();
+            clearTimeout(nextTimeout);
             next();
         },
         data() {
@@ -83,7 +86,7 @@
                     this.result = 'Wrong!';
                 }
 
-                setTimeout(() => this.next(), 1000);
+                nextTimeout = setTimeout(() => this.next(), 1000);
             }
         }
     }

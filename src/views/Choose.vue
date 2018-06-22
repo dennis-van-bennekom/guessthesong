@@ -28,6 +28,9 @@
         async mounted() {
             const { playlists } = await spotify.getFeaturedPlaylists();
             this.playlists = playlists.items;
+
+            const result = await spotify.getUserPlaylists();
+            console.log(result);
         },
         methods: {
             select(playlist) {
