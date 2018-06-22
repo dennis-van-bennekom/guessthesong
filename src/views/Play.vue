@@ -23,7 +23,7 @@
         <section class="finished">
             <p>
                 You got {{ correct }} out of {{ tracks.length }} songs correct!
-                <span v-if="correct > 2">Good job!</span><span v-else>Try better next time...</span>
+                <span v-if="correct > 3">Good job!</span><span v-else>Try better next time...</span>
             </p>
 
             <p>

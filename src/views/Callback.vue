@@ -13,6 +13,8 @@
             const params = getHashParams();
 
             spotify.setAccessToken(params.access_token);
+            localStorage.setItem('accessToken', params.access_token);
+            localStorage.setItem('timestamp', Date.now().toString());
 
             this.$router.push({ name: 'choose' });
         }
