@@ -1,15 +1,34 @@
 <template>
-    <div class="play">
-        <h1>{{ selected.name }}</h1>
+    <div class="play" v-if="!finished">
+        <section class="header">
+            <h1>{{ selected.name }}</h1>
 
-        <h2>Round {{ index + 1 }}/{{ tracks.length }}</h2>
+            <h2>Round {{ index + 1 }}/{{ tracks.length }}</h2>
+        </section>
 
         <h3 v-if="result">{{ result }}</h3>
 
         <section class="answers">
             <button class="answer" v-for="answer in answers" @click.prevent="guess(answer)" :disabled="!!result">
-                {{ answer.track.name }}
+                <span class="button-line artist">{{ answer.track.artists[0].name }}</span>
+                <span class="button-line name">{{ answer.track.name }}</span>
             </button>
+        </section>
+    </div>
+    <div class="play" v-else>
+        <section class="header">
+            <h1>Finished</h1>
+        </section>
+
+        <section class="finished">
+            <p>
+                You got {{ correct }} out of {{ tracks.length }} songs correct!
+                <span v-if="correct > 2">Good job!</span><span v-else>Try better next time...</span>
+            </p>
+
+            <p>
+                <router-link to="choose">Back to playlists</router-link>
+            </p>
         </section>
     </div>
 </template>
@@ -42,7 +61,9 @@
                 choices: [],
                 answers: [],
                 audio: new Audio(),
-                result: ''
+                result: '',
+                finished: false,
+                correct: 0
             }
         },
         async mounted() {
@@ -59,9 +80,15 @@
         methods: {
             next() {
                 this.result = '';
-                this.audio.pause();
 
-                this.current = this.tracks[++this.index];
+                this.index++;
+
+                if (this.index > this.tracks.length - 1) {
+                    this.finished = true;
+                    return;
+                }
+
+                this.current = this.tracks[this.index];
 
                 const answers = [this.current];
 
@@ -82,11 +109,14 @@
             guess(answer) {
                 if (answer.track.id === this.current.track.id) {
                     this.result = 'Correct!';
+                    this.correct++;
                 } else {
                     this.result = 'Wrong!';
                 }
 
-                nextTimeout = setTimeout(() => this.next(), 1000);
+                this.audio.pause();
+
+                nextTimeout = setTimeout(() => this.next(), 2000);
             }
         }
     }
@@ -107,3 +137,65 @@
         return array;
     }
 </script>
+
+<style scoped>
+    .play {
+        width: 100%;
+        max-width: 50rem;
+        margin: 0 auto;
+        padding: 0 1rem 1rem;
+    }
+
+    .header {
+        display: flex;
+        justify-content: center;
+    }
+
+    h1 {
+        padding-right: 1rem;
+    }
+
+    .answers {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .answer {
+        padding: 0.5rem 0.75rem;
+
+        text-align: left;
+        font-size: 1rem;
+
+        background: #3498DB;
+
+        border: none;
+
+        transition: all 0.1s ease-in-out;
+        cursor: pointer;
+    }
+
+    .answer:hover,
+    .answer.selected {
+        background: #2980B9;
+    }
+
+    .answer:not(:last-child) {
+        margin-bottom: 1rem;
+    }
+
+    .button-line {
+        display: block;
+    }
+
+    .artist {
+        margin-bottom: 0.5rem;
+    }
+
+    .name {
+        font-size: 1.1rem;
+    }
+
+    .finished {
+        text-align: center;
+    }
+</style>
