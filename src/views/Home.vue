@@ -6,23 +6,11 @@
 </template>
 
 <script>
-    import spotify from '../spotify';
-
     export default {
         name: 'home',
         data() {
             return {
                 redirectUrl: location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/callback'
-            }
-        },
-        mounted() {
-            const accessToken = localStorage.getItem('accessToken');
-            const timestamp = new Date(+localStorage.getItem('timestamp'));
-            const hour = 60 * 60 * 1000;
-
-            if (accessToken && (Date.now() - timestamp < hour)) {
-                spotify.setAccessToken(accessToken);
-                this.$router.push({ name: 'choose' });
             }
         }
     }

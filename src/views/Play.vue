@@ -40,13 +40,6 @@
 
     export default {
         name: 'play',
-        beforeRouteEnter(to, from, next) {
-            next(vm => {
-                if (!spotify.getAccessToken()) {
-                    vm.$router.push({ name: 'home' });
-                }
-            });
-        },
         beforeRouteLeave(to, from, next) {
             this.audio.pause();
             clearTimeout(nextTimeout);

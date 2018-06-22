@@ -26,13 +26,6 @@
 
     export default {
         name: 'choose',
-        beforeRouteEnter(to, from, next) {
-            next(vm => {
-                if (!spotify.getAccessToken()) {
-                    vm.$router.push({ name: 'home' });
-                }
-            });
-        },
         data() {
             return {
                 playlists: [],
