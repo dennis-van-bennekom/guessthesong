@@ -27,6 +27,7 @@
             });
         },
         beforeRouteLeave(to, from, next) {
+            this.audio.pause();
             next();
         },
         data() {
