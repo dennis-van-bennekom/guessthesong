@@ -66,7 +66,7 @@
 
             this.tracks = shuffle(result.items.filter(item => {
                 return item.track.preview_url;
-            }));
+            })).slice(0, 15); // Limit to 15 songs so it's not too long
 
             this.next();
         },
