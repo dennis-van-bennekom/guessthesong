@@ -35,6 +35,7 @@ const router = new Router({
     mode: 'history'
 });
 
+// TODO: Find other way to do this or clean up.
 router.beforeEach((to, from, next) => {
     if(['home', 'choose', 'play'].indexOf(to.name) > -1) {
         const accessToken = localStorage.getItem('accessToken');
@@ -45,7 +46,7 @@ router.beforeEach((to, from, next) => {
             spotify.setAccessToken(accessToken);
             router.push({ name: 'choose' });
         } else {
-            if (!spotify.getAccessToken()) {
+            if (!spotify.getAccessToken() && to.name !== 'home') {
                 router.push({ name: 'home' });
             }
         }
