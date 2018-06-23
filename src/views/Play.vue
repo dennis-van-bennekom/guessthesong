@@ -6,6 +6,8 @@
             <h2>Round {{ index + 1 }}/{{ tracks.length }}</h2>
         </section>
 
+        <h3>Time: {{ this.roundScore }} - Total score: {{ this.totalScore }}</h3>
+
         <h3 v-if="result">{{ result }}</h3>
 
         <section class="answers">
@@ -23,7 +25,7 @@
         <section class="finished">
             <p>
                 You got {{ correct }} out of {{ tracks.length }} songs correct!
-                <span v-if="correct > 3">Good job!</span><span v-else>Try better next time...</span>
+                Points: {{ totalScore }}
             </p>
 
             <p>
@@ -37,6 +39,7 @@
     import spotify from '../spotify';
 
     let nextTimeout;
+    let scoreInterval;
 
     export default {
         name: 'play',
@@ -56,10 +59,14 @@
                 audio: new Audio(),
                 result: '',
                 finished: false,
-                correct: 0
+                correct: 0,
+                roundScore: 0,
+                totalScore: 0
             }
         },
         async mounted() {
+            this.audio.addEventListener('play', this.handleAudioPlayed);
+
             this.selected = this.$route.params.selected;
 
             const result = await spotify.getPlaylistTracks(this.selected.owner.id, this.selected.id);
@@ -73,6 +80,7 @@
         methods: {
             next() {
                 this.result = '';
+                this.roundScore = 30;
 
                 this.index++;
 
@@ -100,9 +108,12 @@
                 this.audio.play();
             },
             guess(answer) {
+                clearInterval(scoreInterval);
+
                 if (answer.track.id === this.current.track.id) {
-                    this.result = 'Correct!';
+                    this.result = `Correct with ${this.roundScore} points!`;
                     this.correct++;
+                    this.totalScore += this.roundScore;
                 } else {
                     this.result = 'Wrong!';
                 }
@@ -110,6 +121,21 @@
                 this.audio.pause();
 
                 nextTimeout = setTimeout(() => this.next(), 2000);
+            },
+            updateScore() {
+                this.roundScore--;
+
+                if (this.roundScore === 0) {
+                    this.result = 'Too late!';
+
+                    this.audio.pause();
+
+                    clearInterval(scoreInterval);
+                    nextTimeout = setTimeout(() => this.next(), 2000);
+                }
+            },
+            handleAudioPlayed() {
+                scoreInterval = setInterval(this.updateScore, 1000);
             }
         }
     }
