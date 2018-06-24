@@ -49,6 +49,7 @@
         beforeRouteLeave(to, from, next) {
             this.audio.pause();
             clearTimeout(nextTimeout);
+            clearInterval(scoreInterval);
             next();
         },
         data() {
