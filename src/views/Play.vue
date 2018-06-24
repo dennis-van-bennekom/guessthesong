@@ -25,7 +25,10 @@
         <section class="finished">
             <p>
                 You got {{ correct }} out of {{ tracks.length }} songs correct!
-                Points: {{ totalScore }}
+            </p>
+
+            <p>
+                Total points: {{ totalScore }}
             </p>
 
             <p>
@@ -52,6 +55,7 @@
             return {
                 selected: {},
                 tracks: [],
+                allTracks: [],
                 index: -1,
                 current: {},
                 choices: [],
@@ -71,9 +75,12 @@
 
             const result = await spotify.getPlaylistTracks(this.selected.owner.id, this.selected.id);
 
-            this.tracks = shuffle(result.items.filter(item => {
+            // Store all playlist tracks so we don't get the same answers everytime
+            this.allTracks = shuffle(result.items.filter(item => {
                 return item.track.preview_url;
-            })).slice(0, 15); // Limit to 15 songs so it's not too long
+            }));
+
+            this.tracks = this.allTracks.slice(0, 10);  // Limit to 10 songs so it's not too long
 
             this.next();
         },
@@ -94,8 +101,8 @@
                 const answers = [this.current];
 
                 while (answers.length < 4) {
-                    const random = Math.floor(Math.random() * this.tracks.length);
-                    const answer = this.tracks[random];
+                    const random = Math.floor(Math.random() * this.allTracks.length);
+                    const answer = this.allTracks[random];
 
                     if (answers.indexOf(answer) < 0) {
                         answers.push(answer);

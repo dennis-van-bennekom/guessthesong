@@ -37,18 +37,29 @@ const router = new Router({
 
 // TODO: Find other way to do this or clean up.
 router.beforeEach((to, from, next) => {
-    if(['home', 'choose', 'play'].indexOf(to.name) > -1) {
-        const accessToken = localStorage.getItem('accessToken');
-        const timestamp = new Date(+localStorage.getItem('timestamp'));
-        const hour = 60 * 60 * 1000;
+    console.log(to.name);
 
-        if (!spotify.getAccessToken() && accessToken && (Date.now() - timestamp < hour)) {
+    const accessToken = localStorage.getItem('accessToken');
+    const timestamp = new Date(+localStorage.getItem('timestamp'));
+    const hour = 60 * 60 * 1000;
+
+    if (to.name === 'choose' || to.name === 'play') {
+        if (spotify.getAccessToken()) return next();
+        else if (accessToken && (Date.now() - timestamp < hour)) {
+            spotify.setAccessToken(accessToken);
+            return next();
+        } else {
+            router.push({ name: 'home' });
+        }
+    }
+
+    if (to.name === 'home') {
+        if (spotify.getAccessToken()) router.push({ name: 'choose' });
+        else if (accessToken && (Date.now() - timestamp < hour)) {
             spotify.setAccessToken(accessToken);
             router.push({ name: 'choose' });
         } else {
-            if (!spotify.getAccessToken() && to.name !== 'home') {
-                router.push({ name: 'home' });
-            }
+            return next();
         }
     }
 
