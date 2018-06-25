@@ -1,20 +1,24 @@
 <template>
     <div class="choose">
         <section class="playlists">
-            <h2>Featured playlists</h2>
-            <ul>
-                <li v-for="playlist in playlists" @click="select(playlist)">
-                    <img :src="playlist.images[0].url" :alt="playlist.name + ' Image'">
-                </li>
+            <h2 class="title">Featured playlists</h2>
+            <ul class="list">
+                <playlist
+                        v-for="playlist in playlists"
+                        :playlist="playlist"
+                        :key="playlist.id"
+                        @click="select(playlist)" />
             </ul>
         </section>
 
         <section class="playlists">
-            <h2>Own playlists</h2>
-            <ul v-if="ownPlaylists.length">
-                <li v-for="playlist in ownPlaylists" @click="select(playlist)">
-                    <img :src="playlist.images[0].url" :alt="playlist.name + ' Image'">
-                </li>
+            <h2 class="title">Your playlists</h2>
+            <ul class="list" v-if="userPlaylists.length">
+                <playlist
+                        v-for="playlist in userPlaylists"
+                        :playlist="playlist"
+                        :key="playlist.id"
+                        @click="select(playlist)" />
             </ul>
             <span class="no-playlists" v-else>You don't have any public playlists with more than 4 songs...</span>
         </section>
@@ -22,29 +26,29 @@
 </template>
 
 <script>
-    import spotify from '../spotify';
+    import spotify from '@/spotify';
+
+    import Playlist from '@/components/Playlist';
 
     export default {
         name: 'choose',
+        components: {
+            Playlist
+        },
         data() {
             return {
                 playlists: [],
-                ownPlaylists: []
+                userPlaylists: []
             }
         },
         async mounted() {
-            const { playlists } = await spotify.getFeaturedPlaylists();
-            this.playlists = playlists.items;
+            const featuredPlaylists = await spotify.getFeaturedPlaylists();
+            this.playlists = featuredPlaylists.playlists.items;
 
-            const result = await spotify.getUserPlaylists();
-            this.ownPlaylists = result.items.filter(item => {
+            const userPlaylists = await spotify.getUserPlaylists();
+            this.userPlaylists = userPlaylists.items.filter(item => {
                 return item.tracks.total > 4;
             });
-        },
-        methods: {
-            select(playlist) {
-                this.$router.push({ name: 'play', params: { selected: playlist } });
-            }
         }
     }
 </script>
@@ -57,11 +61,11 @@
         padding: 0 1rem 1rem;
     }
 
-    h2 {
+    .title {
         text-align: center;
     }
 
-    ul {
+    .list {
         display: flex;
         flex-wrap: wrap;
         margin: 0;
@@ -70,27 +74,9 @@
         list-style: none;
     }
 
-    li {
-        width: 25%;
-
-        overflow: hidden;
-        cursor: pointer;
-    }
-
-    img {
+    .no-playlists {
         display: block;
-        width: 100%;
 
-        transition: all 0.1s ease-in-out;
-    }
-
-    li:hover img {
-        transform: scale(1.2);
-    }
-
-    @media screen and (max-width: 35rem) {
-        li {
-            width: 33.3333%;
-        }
+        text-align: center;
     }
 </style>

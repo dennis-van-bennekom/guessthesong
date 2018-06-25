@@ -18,6 +18,7 @@
         margin: 0;
 
         background: #ECF0F1;
+        color: #1f2123;
     }
 
     #app {
@@ -26,12 +27,13 @@
         -moz-osx-font-smoothing: grayscale;
     }
 
-    .title {
+    #app > .title {
         margin: 0;
-        padding: 0.5rem;
+        padding: 1rem 0.5rem;
 
         text-align: center;
-        font-size: 1.2rem;
+        font-family: 'Comfortaa', cursive;
+        font-size: 1.5rem;
 
         background: #2C3E50;
         color: #fff;

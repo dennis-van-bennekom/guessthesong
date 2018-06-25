@@ -1,6 +1,9 @@
 <template>
     <div class="home">
-        <a :href="`https://accounts.spotify.com/authorize?client_id=89a8abdb45134beeb7062678510eaad9&redirect_uri=${redirectUrl}&response_type=token`">Login
+        <p class="introduction">
+            Please login with Spotify to play Guess the Song!
+        </p>
+        <a class="login-button" :href="`https://accounts.spotify.com/authorize?client_id=89a8abdb45134beeb7062678510eaad9&redirect_uri=${redirectUrl}&response_type=token`">Login
             with Spotify</a>
     </div>
 </template>
@@ -18,13 +21,13 @@
 
 <style scoped>
     .home {
-        display: flex;
-        justify-content: center;
         padding: 1rem;
+
+        text-align: center;
     }
 
-    a {
-        display: block;
+    .login-button {
+        display: inline-block;
         padding: 0.5rem 0.75rem;
 
         text-decoration: none;
@@ -36,7 +39,7 @@
         cursor: pointer;
     }
 
-    a:hover {
+    .login-button:hover {
         background: #2980B9;
     }
 </style>

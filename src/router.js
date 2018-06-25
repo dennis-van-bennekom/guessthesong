@@ -37,8 +37,6 @@ const router = new Router({
 
 // TODO: Find other way to do this or clean up.
 router.beforeEach((to, from, next) => {
-    console.log(to.name);
-
     const accessToken = localStorage.getItem('accessToken');
     const timestamp = new Date(+localStorage.getItem('timestamp'));
     const hour = 60 * 60 * 1000;

@@ -11,10 +11,11 @@
         <h3 v-if="result">{{ result }}</h3>
 
         <section class="answers">
-            <button class="answer" v-for="answer in answers" @click.prevent="guess(answer)" :disabled="!!result">
-                <span class="button-line artist">{{ answer.track.artists[0].name }}</span>
-                <span class="button-line name">{{ answer.track.name }}</span>
-            </button>
+            <answer v-for="answer in answers"
+                    :answer="answer"
+                    :disabled="!!result"
+                    :key="answer.track.id"
+                    @click.prevent.native="guess(answer, $event)" />
         </section>
     </div>
     <div class="play" v-else>
@@ -39,13 +40,18 @@
 </template>
 
 <script>
-    import spotify from '../spotify';
+    import spotify from '@/spotify';
+
+    import Answer from '@/components/Answer';
 
     let nextTimeout;
     let scoreInterval;
 
     export default {
         name: 'play',
+        components: {
+            Answer
+        },
         beforeRouteLeave(to, from, next) {
             this.audio.pause();
             clearTimeout(nextTimeout);
@@ -73,6 +79,7 @@
             this.audio.addEventListener('play', this.handleAudioPlayed);
 
             this.selected = this.$route.params.selected;
+            if (!this.selected) this.$router.push({ name: 'choose' });
 
             const result = await spotify.getPlaylistTracks(this.selected.owner.id, this.selected.id);
 
@@ -185,41 +192,6 @@
     .answers {
         display: flex;
         flex-direction: column;
-    }
-
-    .answer {
-        padding: 0.5rem 0.75rem;
-
-        text-align: left;
-        font-size: 1rem;
-
-        background: #3498DB;
-
-        border: none;
-
-        transition: all 0.1s ease-in-out;
-        cursor: pointer;
-    }
-
-    .answer:hover,
-    .answer.selected {
-        background: #2980B9;
-    }
-
-    .answer:not(:last-child) {
-        margin-bottom: 1rem;
-    }
-
-    .button-line {
-        display: block;
-    }
-
-    .artist {
-        margin-bottom: 0.5rem;
-    }
-
-    .name {
-        font-size: 1.1rem;
     }
 
     .finished {
